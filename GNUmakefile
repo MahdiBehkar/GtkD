@@ -52,7 +52,7 @@ else
 endif
 
 ifeq ("$(OS)","Linux")
-    LDFLAGS+=$(LINKERFLAG)-ldl
+    LDFLAGS+=$(LINKERFLAG) -ldl
 endif
 
 ifeq ("$(OS)","Darwin")
@@ -60,7 +60,7 @@ ifeq ("$(OS)","Darwin")
     SONAME=$(LINKERFLAG)-dylib_install_name $(LINKERFLAG)"$@" $(LINKERFLAG)-dylib_current_version $(LINKERFLAG)$(GTKD_VERSION) $(LINKERFLAG)-dylib_compatibility_version $(LINKERFLAG)$(MAJOR).0
 else
     SO_POSTFIX=so
-    SONAME=$(LINKERFLAG)-soname=$@.$(SO_VERSION)
+    SONAME=$(LINKERFLAG) -soname=$@.$(SO_VERSION)
 endif
 
 AR=ar
@@ -263,10 +263,10 @@ test: $(BINNAME_DEMO)
 $(BINNAME_DEMO): IMPORTS=-Igenerated/gtkd -Idemos/gtkD/TestWindow
 $(BINNAME_DEMO): $(OBJECTS_DEMO)
 	$(if $(wildcard $(SONAME_GTKD)),,$(if $(wildcard $(LIBNAME_GTKD)),,$(MAKE) $(LIBNAME_GTKD)))
-	$(if $(wildcard $(SONAME_GTKD)),$(eval LDFLAGS+= $(LINKERFLAG)-rpath=./))
+	$(if $(wildcard $(SONAME_GTKD)),$(eval LDFLAGS+= $(LINKERFLAG) -rpath=./))
 	$(if $(wildcard $(SONAME_GTKD)),$(if $(findstring "gdc","$(DC)"),$(eval LDFLAGS+=-shared-libphobos)))
 	$(if $(wildcard $(SONAME_GTKD)),$(if $(wildcard $(SONAME_GTKD).$(SO_VERSION)),,$(shell ln -s $(SONAME_GTKD) $(SONAME_GTKD).$(SO_VERSION))))
-	$(DC) $(OBJECTS_DEMO) $(output) $(if $(wildcard $(SONAME_GTKD)),$(LINKERFLAG)./libgtkd-$(MAJOR).$(SO_POSTFIX),$(LINKERFLAG)./libgtkd-$(MAJOR).a) $(LDFLAGS)
+	$(DC) $(OBJECTS_DEMO) $(output) $(if $(wildcard $(SONAME_GTKD)),$(LINKERFLAG) ./libgtkd-$(MAJOR).$(SO_POSTFIX),$(LINKERFLAG)./libgtkd-$(MAJOR).a) $(LDFLAGS)
 
 #######################################################################
 
